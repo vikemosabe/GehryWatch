@@ -1,0 +1,86 @@
+{
+    "media": [
+        {
+            "defName": "IMAGE_TIL",
+            "type": "png-trans",
+            "file": "images/til.png"
+        },
+        {
+            "defName": "IMAGE_PAST",
+            "type": "png-trans",
+            "file": "images/past.png"
+        },
+        {
+            "defName": "IMAGE_OCLOCK",
+            "type": "png-trans",
+            "file": "images/oclock.png"
+        },
+        {
+            "defName": "IMAGE_NOON",
+            "type": "png-trans",
+            "file": "images/noon.png"
+        },
+        {
+            "defName": "IMAGE_MIDNIGHT",
+            "type": "png-trans",
+            "file": "images/midnight.png"
+        },
+        {
+            "defName": "IMAGE_HALF",
+            "type": "png-trans",
+            "file": "images/half.png"
+        },
+        {
+            "defName": "DIGIT_NINE",
+            "type": "png-trans",
+            "file": "images/9.png"
+        },
+        {
+            "defName": "DIGIT_EIGHT",
+            "type": "png-trans",
+            "file": "images/8.png"
+        },
+        {
+            "defName": "DIGIT_SEVEN",
+            "type": "png-trans",
+            "file": "images/7.png"
+        },
+        {
+            "defName": "DIGIT_SIX",
+            "type": "png-trans",
+            "file": "images/6.png"
+        },
+        {
+            "defName": "DIGIT_FIVE",
+            "type": "png-trans",
+            "file": "images/5.png"
+        },
+        {
+            "defName": "DIGIT_FOUR",
+            "type": "png-trans",
+            "file": "images/4.png"
+        },
+        {
+            "defName": "DIGIT_THREE",
+            "type": "png-trans",
+            "file": "images/3.png"
+        },
+        {
+            "defName": "DIGIT_TWO",
+            "type": "png-trans",
+            "file": "images/2.png"
+        },
+        {
+            "defName": "DIGIT_ONE",
+            "type": "png-trans",
+            "file": "images/1.png"
+        },
+        {
+            "defName": "DIGIT_ZERO",
+            "type": "png-trans",
+            "file": "images/0.png"
+        }
+    ],
+    "friendlyVersion": "VERSION",
+    "versionDefName": "APP_RESOURCES"
+}

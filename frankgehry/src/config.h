@@ -1,0 +1,1 @@
+#define INVERTED 0//0 = white background, 1 = black background
