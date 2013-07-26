@@ -7,7 +7,7 @@
 #include "textimages_layer.h"
 
 
-#define MY_UUID { 0x1D, 0x6D, 0x79, 0x77, 0x33, 0x5A, 0x45, 0xAC, 0xBF, 0x9F, 0x1D, 0x9B, 0x6E, 0x1B, 0x21, 0xC4 }
+#define MY_UUID { 0x65, 0x24, 0xd3, 0x92, 0x12, 0x67, 0x4c, 0x6d, 0xb8, 0xc2, 0x51, 0xee, 0x92, 0x56, 0xa0, 0x20 }
 #if (INVERTED == 1)
 #define BG_COLOR GColorBlack
 #define FG_COLOR GColorWhite
@@ -15,13 +15,6 @@
 #define BG_COLOR GColorWhite
 #define FG_COLOR GColorBlack
 #endif
-//set some constants for the resource id pointers for the images
-#define TIL RESOURCE_ID_IMAGE_TIL_BLACK
-#define PAST RESOURCE_ID_IMAGE_PAST_BLACK
-#define OCLOCK RESOURCE_ID_IMAGE_OCLOCK_BLACK
-#define NOON RESOURCE_ID_IMAGE_NOON_BLACK
-#define MIDNIGHT RESOURCE_ID_IMAGE_MIDNIGHT_BLACK
-#define HALF RESOURCE_ID_IMAGE_HALF_BLACK
 
 
 PBL_APP_INFO(MY_UUID,
@@ -35,14 +28,15 @@ static MinutesLayer minutes_layer;
 static TextImagesLayer textimages_layer;
 static HoursLayer hours_layer;
 
-void update_time()
+void handle_tick( AppContextRef ctx, PebbleTickEvent *t )
 {
-	PblTm time;
-	get_time(&time);
+	(void) ctx;
+	PblTm time = *(t->tick_time);
 	if (time.tm_min != 30 && time.tm_min != 0)
 	{
 		//set minutes
 		minutes_layer_set_time(&minutes_layer, *(&time.tm_min));
+		layer_set_hidden((Layer *)&minutes_layer.layer, false);
 		//hide half
 		textimages_layer_hide_half_image(&textimages_layer);
 		textimages_layer_hide_oclock_image(&textimages_layer);
@@ -51,6 +45,7 @@ void update_time()
 			textimages_layer_show_past_image(&textimages_layer, PAST);
 			textimages_layer_hide_til_image(&textimages_layer);
 			hours_layer_set_time(&hours_layer, *(&time.tm_hour));
+			layer_set_hidden((Layer *)&hours_layer.layer, false);
 		}
 		else
 		{
@@ -58,13 +53,15 @@ void update_time()
 			textimages_layer_hide_past_image(&textimages_layer);
 			textimages_layer_show_til_image(&textimages_layer, TIL);
 			hours_layer_set_time(&hours_layer, newhours);
+			layer_set_hidden((Layer *)&hours_layer.layer, false);
 		}
 	}
 	else if (time.tm_min == 30)
 	{
 		//gotta remove the digits and display the text 'half' instead
-		minutes_layer_deinit(&minutes_layer);
+		layer_set_hidden((Layer *)&minutes_layer.layer, true);
 		hours_layer_set_time(&hours_layer, *(&time.tm_hour));
+		layer_set_hidden((Layer *)&hours_layer.layer, false);
 		textimages_layer_show_half_image(&textimages_layer, HALF);
 		textimages_layer_show_past_image(&textimages_layer, PAST);
 		textimages_layer_hide_til_image(&textimages_layer);
@@ -75,7 +72,7 @@ void update_time()
 	else if (time.tm_min == 0)
 	{
 		//hide all kinds of stuff
-		minutes_layer_deinit(&minutes_layer);
+		layer_set_hidden((Layer *)&minutes_layer.layer, true);
 		textimages_layer_hide_half_image(&textimages_layer);
 		textimages_layer_hide_past_image(&textimages_layer);
 		textimages_layer_hide_til_image(&textimages_layer);
@@ -87,13 +84,14 @@ void update_time()
 			textimages_layer_hide_noon_image(&textimages_layer);
 			textimages_layer_hide_midnight_image(&textimages_layer);
 			hours_layer_set_time(&hours_layer, *(&time.tm_hour));
+			layer_set_hidden((Layer *)&hours_layer.layer, false);
 		}
 		else
 		{
 			//hide the oclock
 			textimages_layer_hide_oclock_image(&textimages_layer);
 			//hide the hour digits
-			hours_layer_deinit(&hours_layer);
+			layer_set_hidden((Layer *)&hours_layer.layer, true);
 			if (time.tm_hour == 0 || time.tm_hour == 24)
 			{
 				textimages_layer_show_midnight_image(&textimages_layer, MIDNIGHT);
@@ -107,12 +105,6 @@ void update_time()
 		//
 		
 	}
-}
-void handle_tick( AppContextRef ctx, PebbleTickEvent *t )
-{
-	(void) ctx;
-	PblTm time = *(t->tick_time);
-	update_time(&time);
 }
 void handle_init(AppContextRef ctx) {
   (void)ctx;
@@ -131,6 +123,10 @@ void handle_init(AppContextRef ctx) {
 	// Set initial time.
 	PblTm time;
 	get_time(&time);
+	PebbleTickEvent t;
+	t.tick_time = &time;
+	t.units_changed = SECOND_UNIT | MINUTE_UNIT | HOUR_UNIT | DAY_UNIT;
+	handle_tick(ctx, &t);
 	
 }
 

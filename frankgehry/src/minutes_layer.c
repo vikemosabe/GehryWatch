@@ -21,6 +21,7 @@ static uint8_t DIGIT_RESOURCES[] = {
 	RESOURCE_ID_DIGIT_NINE_BLACK,
 };
 static int temp_tens, temp_ones;
+static int current_tens;
 
 void minutes_layer_set_time(MinutesLayer* minutes_layer, int mins)
 {
@@ -32,42 +33,49 @@ void minutes_layer_set_time(MinutesLayer* minutes_layer, int mins)
 	//tens
 	if (temp_tens == 0 || (temp_tens == 5 && temp_ones != 0))//hide the leading zero
 	{
-		layer_remove_from_parent(&minutes_layer->tens_layer.layer.layer);
-		bmp_deinit_container(&minutes_layer->tens_layer);
+		//layer_remove_from_parent(&minutes_layer->tens_layer.layer.layer);
+		//bmp_deinit_container(&minutes_layer->tens_layer);
+		layer_set_hidden((Layer *)&minutes_layer->tens_layer.layer, true);
 	}
 	else if (temp_ones != 0)
 	{
-		if (temp_tens < 3)//show the 1 or 2
-		{
-			layer_remove_from_parent(&minutes_layer->tens_layer.layer.layer);
-			bmp_deinit_container(&minutes_layer->tens_layer);
-			
-			bmp_init_container(DIGIT_RESOURCES[temp_tens], &minutes_layer->tens_layer);
-			layer_set_frame(&minutes_layer->tens_layer.layer.layer, GRect(0, 0, 33, 64));
-			layer_add_child(&minutes_layer->layer, &minutes_layer->tens_layer.layer.layer);
-			//current_ten = temp_tens;
-		}
-		else if (temp_tens == 3)//gotta change it so shows counting down from 30 instead of counting up
-		{
-			//ought to get here only if it's 3 or 4
-			layer_remove_from_parent(&minutes_layer->tens_layer.layer.layer);
-			bmp_deinit_container(&minutes_layer->tens_layer);
-			
-			bmp_init_container(DIGIT_RESOURCES[5 - temp_tens], &minutes_layer->tens_layer);
-			layer_set_frame(&minutes_layer->tens_layer.layer.layer, GRect(0, 0, 33, 64));
-			layer_add_child(&minutes_layer->layer, &minutes_layer->tens_layer.layer.layer);
-			//current_ten = temp_tens;
-		}
-		else
-		{
-			layer_remove_from_parent(&minutes_layer->tens_layer.layer.layer);
-			bmp_deinit_container(&minutes_layer->tens_layer);
-			
-			bmp_init_container(DIGIT_RESOURCES[5 - temp_tens], &minutes_layer->tens_layer);
-			layer_set_frame(&minutes_layer->tens_layer.layer.layer, GRect(0, 0, 33, 64));
-			layer_add_child(&minutes_layer->layer, &minutes_layer->tens_layer.layer.layer);
-			//current_ten = temp_tens;
-		}	
+		//if (temp_tens != current_tens)
+		//{
+			layer_set_hidden((Layer *)&minutes_layer->tens_layer.layer, false);
+			if (temp_tens < 3)//show the 1 or 2
+			{
+				layer_remove_from_parent(&minutes_layer->tens_layer.layer.layer);
+				bmp_deinit_container(&minutes_layer->tens_layer);
+				
+				bmp_init_container(DIGIT_RESOURCES[temp_tens], &minutes_layer->tens_layer);
+				layer_set_frame(&minutes_layer->tens_layer.layer.layer, GRect(0, 0, 33, 64));
+				layer_add_child(&minutes_layer->layer, &minutes_layer->tens_layer.layer.layer);
+				//current_ten = temp_tens;
+			}
+			else if (temp_tens == 3)//gotta change it so shows counting down from 30 instead of counting up
+			{
+				//ought to get here only if it's 3 or 4
+				layer_remove_from_parent(&minutes_layer->tens_layer.layer.layer);
+				bmp_deinit_container(&minutes_layer->tens_layer);
+				
+				bmp_init_container(DIGIT_RESOURCES[5 - temp_tens], &minutes_layer->tens_layer);
+				layer_set_frame(&minutes_layer->tens_layer.layer.layer, GRect(0, 0, 33, 64));
+				layer_add_child(&minutes_layer->layer, &minutes_layer->tens_layer.layer.layer);
+				//current_ten = temp_tens;
+				//layer_set_hidden((Layer *)&minutes_layer->tens_layer.layer, false);
+			}
+			else
+			{
+				layer_remove_from_parent(&minutes_layer->tens_layer.layer.layer);
+				bmp_deinit_container(&minutes_layer->tens_layer);
+				
+				bmp_init_container(DIGIT_RESOURCES[5 - temp_tens], &minutes_layer->tens_layer);
+				layer_set_frame(&minutes_layer->tens_layer.layer.layer, GRect(0, 0, 33, 64));
+				layer_add_child(&minutes_layer->layer, &minutes_layer->tens_layer.layer.layer);
+				//current_ten = temp_tens;
+				//layer_set_hidden((Layer *)&minutes_layer->tens_layer.layer, false);
+			}
+		//}
 	}
 	//ones
 	if (temp_tens < 3)
@@ -109,7 +117,7 @@ void minutes_layer_set_time(MinutesLayer* minutes_layer, int mins)
 		bitmap_layer_set_compositing_mode(&minutes_layer->tens_layer.layer, GCompOpAssignInverted);
 		bitmap_layer_set_compositing_mode(&minutes_layer->ones_layer.layer, GCompOpAssignInverted);
 	}
-	
+	current_tens = temp_tens;
 }
 void minutes_layer_init(MinutesLayer* minutes_layer)
 {

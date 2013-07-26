@@ -21,13 +21,17 @@ static uint8_t DIGIT_RESOURCES[] = {
 	RESOURCE_ID_DIGIT_NINE_BLACK,
 };
 static int temp_tens, temp_ones;
+static int current_hours;
 
 void hours_layer_set_time(HoursLayer* hours_layer, int hours)
 {
 	//PblTm time;
 	//get_time(&time);
 	//set the numbers here
-	
+	if (hours == current_hours)
+	{
+		return;
+	}
 	temp_ones = hours % 10;
 	if (hours > 12)
 	{
@@ -41,8 +45,9 @@ void hours_layer_set_time(HoursLayer* hours_layer, int hours)
 	//tens
 	if (temp_tens == 0 || (temp_tens == 12))//hide the leading zero
 	{
-		layer_remove_from_parent(&hours_layer->tens_layer.layer.layer);
-		bmp_deinit_container(&hours_layer->tens_layer);
+		//layer_remove_from_parent(&hours_layer->tens_layer.layer.layer);
+		//bmp_deinit_container(&hours_layer->tens_layer);
+		layer_set_hidden((Layer *)&hours_layer->tens_layer.layer, true);
 	}
 	else
 	{
@@ -52,6 +57,7 @@ void hours_layer_set_time(HoursLayer* hours_layer, int hours)
 		bmp_init_container(DIGIT_RESOURCES[1], &hours_layer->tens_layer);
 		layer_set_frame(&hours_layer->tens_layer.layer.layer, GRect(0, 0, 33, 64));
 		layer_add_child(&hours_layer->layer, &hours_layer->tens_layer.layer.layer);
+		layer_set_hidden((Layer *)&hours_layer->tens_layer.layer, false);
 	}
 	//ones
 	if (hours > 12)
@@ -79,7 +85,7 @@ void hours_layer_set_time(HoursLayer* hours_layer, int hours)
 		bitmap_layer_set_compositing_mode(&hours_layer->tens_layer.layer, GCompOpAssignInverted);
 		bitmap_layer_set_compositing_mode(&hours_layer->ones_layer.layer, GCompOpAssignInverted);
 	}
-	
+	current_hours = hours;
 }
 void hours_layer_init(HoursLayer* hours_layer)
 {
