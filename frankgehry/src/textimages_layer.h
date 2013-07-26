@@ -32,4 +32,6 @@ void textimages_layer_hide_midnight_image(TextImagesLayer* textimages_layer);
 void textimages_layer_show_oclock_image(TextImagesLayer* textimages_layer, uint8_t res_id);
 void textimages_layer_hide_oclock_image(TextImagesLayer* textimages_layer);
 
+void textimages_layer_hide(Layer image_layer);
+void textimages_layer_show(Layer image_layer);
 #endif // TEXTIMAGES_LAYER_H
